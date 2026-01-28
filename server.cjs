@@ -1,67 +1,83 @@
-/*const express = require("express");
+
+require("dotenv").config();
+const express = require("express");
+const mongoose = require("mongoose");
 const app = express();
 app.use(express.json());
+app.use(express.static("public"));
+console.log("Server Starting");
 
-app.get("/", (req, res) => {
-    console.log("🔥 REQUEST RECEIVED");
-    res.json("OK");
+const MONGO_URI = process.env.MONGO_URI;
+mongoose.connect(MONGO_URI)
+.then(() => console.log("✅ MongoDB Atlas connected"))
+.catch((err) => console.error("❌ MongoDB connection error:", err));
+
+app.get("/status",(req,res)=>{
+    res.json({message:"Server is running",db:mongoose.connection.readyState});
 });
 
-app.listen(3000, () => {
-    console.log("🔥 SERVER STARTED");
-});*/
+const todoSchema = new mongoose.Schema({
+    title:{ type:String,required:true},
+    completed:{type:Boolean,default:false},
+});
 
-const express = require("express");//imports express library
-const app = express();//creates an express aplication object
-app.use(express.json());//tells Express to automatically parse incoming JSON requests.
-console.log("Server starting");
-app.use(express.static("public"));//// Serve frontend files from "public" folder
+const Todo=mongoose.model("Todo",todoSchema);
 
-//in memory storage
-let todos=[];
-let idCounter=1;
-
-//test root route
-/*app.get("/",(req,res)=>{
-    console.log("Request recieved");
-    res.json("OK");
-});*/
-
-//get all todos
-app.get("/todos",(req,res)=>
+app.get("/todos", async (req,res)=>{
+    try{
+        const todos = await Todo.find();
+        res.json(todos);
+    }
+catch(err)
 {
-    res.json(todos);
+    res.status(500).json({error:"Server error"});
+}
 });
 
-//add a new todo
-app.post("/todos",(req,res)=>{
-    const{title}=req.body;//extracts the title from the incoming JSON body., to convert raw json text into js object
-    if(!title) return res.status(400).json({error:"Title is required"});
-    const newTodo = {//create a newTodo 
-        id:idCounter++,title,completed:false};//new task start as not completed
-        todos.push(newTodo);//adds the new todo into the server array
-        res.status(201).json(newTodo);//sends newly created todo back to the frontend
+app.post("/todos", async (req, res)=>{
+    try{
+        const { title } = req.body;
+        if (!title) return res.status(400).json({error:"Title is required"});
+
+        const newTodo = await Todo.create({title});
+        console.log("🟢 New todo saved to DB:", newTodo);
+        res.status(201).json(newTodo);
+    }
+    catch(err)
+    {
+        res.status(500).json({error:"Server error"});
+    }
 });
 
-//update a todo
-app.put("/todo/:id",(req,res)=>{
-    const id = parseInt(req.params.id);//converts the id from string to number, get ID from URL
-    const { title,completed} =req.body;//get updated values from client.
-    const todo=todos.find(t=>t.id===id);//convert it to number
-    if(!todo) return res.status(404).json({error:"Todo is not found"});//find the todo in memory.
-    if(title!==undefined) todo.title=title;
-    if(completed!==undefined) todo.completed=completed;
-    res.json(todo);
-});
-//delete a todo
-app.delete("/todos/:id",(req,res)=>{
-    const id = parseInt(req.params.id);//get numeric ID from URL.
-    const index = todos.findIndex(t=>t.id===id);
-    if(index===-1) return res.status(404).json({error:"Todo not found"});
-    const deleted = todos.splice(index,1);
-    res.json(deleted[0]);
-});
-app.listen(3000,()=>{//tells Express to start the server on port 3000.
-    console.log(" SERVER STARTED on http://localhost:3000");
-});
-//listen all requests on this port and response accordigly
+app.put("/todos/:id",async(req,res)=>{
+    try{
+        const{ completed } =req.body;
+        const updatedTodo = await Todo.findByIdAndUpdate(
+            req.params.id,
+            {completed },
+            { new: true}
+        );
+        if (!updatedTodo) return res.status(404).json({error:"Todo not found"});
+        res.json(updatedTodo);
+    }
+    catch(err)
+    {
+        res.status(500).json({error:"Server error"});
+    }
+    });
+
+    app.delete("/todos/:id", async (req, res) => {
+        try {
+          const deletedTodo = await Todo.findByIdAndDelete(req.params.id);
+          if (!deletedTodo) return res.status(404).json({ error: "Todo not found" });
+      
+          res.json(deletedTodo);
+        } catch (err) {
+          res.status(500).json({ error: "Server error" });
+        }
+      });
+  
+ 
+  app.listen(3000, () => {
+    console.log("Server started on http://localhost:3000");
+  });

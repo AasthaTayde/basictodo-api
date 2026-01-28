@@ -13,24 +13,30 @@ async function loadTodos() {
   list.innerHTML = "";//this removes everything inside that element
 
   todos.forEach(todo => {
-    const li = document.createElement("li");//for each todo, the code creates a new <li>, puts the todo text inside it , adds a style if its complete.
-    li.textContent = todo.title;
-    li.className = todo.completed ? "completed" : "";
+    const li = document.createElement("li");
 
-    // Toggle completion button
-    const toggleBtn = document.createElement("button");//creates new html button element in memory
-    toggleBtn.textContent = todo.completed ? "Undo" : "Complete";//sets the button text depending on whether the todo is done.
-    toggleBtn.onclick = () => toggleTodo(todo.id, !todo.completed);// when clicked, calls a function to flip(toggle) that todos's completed state.
+    // Checkbox for completion
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = todo.completed; // reflects current state
+    checkbox.onchange = () => toggleTodo(todo._id, checkbox.checked);
+
+    // Todo text
+    const span = document.createElement("span");
+    span.textContent = todo.title;
+    if (todo.completed) span.style.textDecoration = "line-through";
 
     // Delete button
     const delBtn = document.createElement("button");
     delBtn.textContent = "Delete";
-    delBtn.onclick = () => deleteTodo(todo.id);
+    delBtn.onclick = () => deleteTodo(todo._id);
 
-    li.appendChild(toggleBtn);//attach buttons to <li>
-    li.appendChild(delBtn);//attach buttons to <li>
-    list.appendChild(li);//attach <li> to main list
-  });
+    li.appendChild(checkbox);
+    li.appendChild(span);
+    li.appendChild(delBtn);
+    list.appendChild(li);
+});
+
 }
 
 // Add a new todo
@@ -51,7 +57,7 @@ async function addTodo() {//contacting backend for http post request to your ser
 
 // Toggle completion
 async function toggleTodo(id, completed) {
-  await fetch(`/todo/${id}`, {
+  await fetch(`/todos/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ completed })
