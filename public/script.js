@@ -16,10 +16,10 @@ async function loadTodos() {
     const li = document.createElement("li");
 
     // Checkbox for completion
-    const checkbox = document.createElement("input");
+    const checkbox = document.createElement("input");//creating the checkbox and <input> makes a new HTML element in memory
     checkbox.type = "checkbox";
-    checkbox.checked = todo.completed; // reflects current state
-    checkbox.onchange = () => toggleTodo(todo._id, checkbox.checked);
+    checkbox.checked = todo.completed; // reflects current state(can be either true or false) to match the actual todo status with mongo
+    checkbox.onchange = () => toggleTodo(todo._id, checkbox.checked);//sends request to yr backend to update db
 
     // Todo text
     const span = document.createElement("span");
