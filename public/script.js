@@ -22,9 +22,15 @@ async function loadTodos() {
     checkbox.onchange = () => toggleTodo(todo._id, checkbox.checked);//sends request to yr backend to update db
 
     // Todo text
-    const span = document.createElement("span");
-    span.textContent = todo.title;
-    if (todo.completed) span.style.textDecoration = "line-through";
+    const todoTextElement = document.createElement("span");
+    todoTextElement.textContent = todo.title;
+    if (todo.completed) todoTextElement.style.textDecoration = "line-through";
+     
+    //Edit button
+    const editBtn = document.createElement("button");
+    editBtn.textContent = "Edit";
+    editBtn.onclick = () => startEditTodo(todo._id,todoTextElement);
+    
 
     // Delete button
     const delBtn = document.createElement("button");
@@ -32,7 +38,8 @@ async function loadTodos() {
     delBtn.onclick = () => deleteTodo(todo._id);
 
     li.appendChild(checkbox);
-    li.appendChild(span);
+    li.appendChild(todoTextElement);
+    li.appendChild(editBtn);
     li.appendChild(delBtn);
     list.appendChild(li);
 });
@@ -65,8 +72,46 @@ async function toggleTodo(id, completed) {
   loadTodos();
 }
 
+
 // Delete todo
 async function deleteTodo(id) {
   await fetch(`/todos/${id}`, { method: "DELETE" });
   loadTodos();
 }
+
+function startEditTodo(id, todoTextElement){
+  const currentText = todoTextElement.textContent;
+
+  const editinput = document.createElement("input");
+  editinput.type = "text";
+  editinput.value = currentText;
+ todoTextElement.replaceWith(editinput);
+  editinput.focus();
+
+  editinput.addEventListener("keypress",function(e) {
+    if(e.key === "Enter"){
+      finishEditTodo(id,editinput,todoTextElement);
+    }
+  });
+
+  editinput.addEventListener("blur",function()
+  {
+    finishEditTodo(id,editinput,todoTextElement);
+  });
+}
+
+async function finishEditTodo(id, editinput,todoTextElement ){
+  const newTitle = editinput.value.trim();
+  if(!newTitle)
+  return loadTodos();
+
+  await fetch(`/todos/${id}`,{
+    method:"PUT",
+    headers:{ "Content-Type": "application/json"},
+    body:JSON.stringify({title:newTitle})
+  });
+  loadTodos();
+}
+
+
+

@@ -61,10 +61,13 @@ app.post("/todos", async (req, res)=>{
 
 app.put("/todos/:id",async(req,res)=>{
     try{
-        const{ completed } =req.body;
+        const{ completed, title } =req.body;
+        const updateFields = {};
+        if(completed!==undefined)updateFields.completed=completed;
+        if(title!==undefined) updateFields.title = title;
         const updatedTodo = await Todo.findByIdAndUpdate(
             req.params.id,
-            {completed },
+            updateFields,
             { new: true}
         );
         if (!updatedTodo) return res.status(404).json({error:"Todo not found"});
