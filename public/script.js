@@ -80,15 +80,15 @@ async function deleteTodo(id) {
 }
 
 function startEditTodo(id, todoTextElement){
-  const currentText = todoTextElement.textContent;
+  const currentText = todoTextElement.textContent;// because we want the input box to start with the existing text not to be empty, do we put the content inside it first.
 
-  const editinput = document.createElement("input");
-  editinput.type = "text";
-  editinput.value = currentText;
- todoTextElement.replaceWith(editinput);
-  editinput.focus();
+  const editinput = document.createElement("input");//create a textbox, does not appear on the page yet.
+  editinput.type = "text"; //make it a text input.
+  editinput.value = currentText; //put old text inside the old todo text.
+ todoTextElement.replaceWith(editinput);// remove the <span> from DOM and put the <input> in the exact same place 
+  editinput.focus();//automatically places the cursor inside the input, UX improvement
 
-  editinput.addEventListener("keypress",function(e) {
+  editinput.addEventListener("keypress",function(e) {//enter and blur belong to the input , not the button
     if(e.key === "Enter"){
       finishEditTodo(id,editinput,todoTextElement);
     }
@@ -112,6 +112,10 @@ async function finishEditTodo(id, editinput,todoTextElement ){
   });
   loadTodos();
 }
+//Edit functionality flow:
+//We first display the todo as plain text using a span (view mode).
+// When the Edit button is clicked, that span is replaced with an input box containing the same text so the user can modify it.
+// After pressing Enter or clicking outside, the text is trimmed, sent to the backend using a PUT request, and the UI reloads with the updated value.
 
 
 
