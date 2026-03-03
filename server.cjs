@@ -5,6 +5,8 @@ const mongoose = require("mongoose");//import mongoose library to use in this fi
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("./models/User");
+const Todo = require("./models/Todo");
+const authMiddleware = require("./middleware/authMiddleware");
 const app = express();//creates an express application object
 app.use(express.json());//tells Express to automatically parse incoming JSON requests.
 app.use(express.static("public"));// Serve frontend files from "public" folder
@@ -29,16 +31,9 @@ app.get("/status",(req,res)=>{
     res.json({message:"Server is running",db:mongoose.connection.readyState});
 });//returns a number, 1:connected,0:disconnected.
 
-const todoSchema = new mongoose.Schema({
-    title:{ type:String,required:true},
-    completed:{type:Boolean,default:false},
-});//creates a mongoose schema for todo item
-
-const Todo=mongoose.model("Todo",todoSchema);//containes in built functions
-
-app.get("/todos", async (req,res)=>{
+app.get("/todos", authMiddleware, async (req,res)=>{
     try{
-        const todos = await Todo.find();
+        const todos = await Todo.find({ user: req.userId});
         res.json(todos);
     }
 catch(err)
@@ -47,12 +42,12 @@ catch(err)
 }
 });
 
-app.post("/todos", async (req, res)=>{
+app.post("/todos",authMiddleware, async (req, res)=>{
     try{
         const { title } = req.body;//extracts the title from the incoming JSON body., to convert raw json text into js object
         if (!title) return res.status(400).json({error:"Title is required"});
 
-        const newTodo = await Todo.create({title});
+        const newTodo = await Todo.create({title, user: req.userId});
         console.log("🟢 New todo saved to DB:", newTodo);
         res.status(201).json(newTodo);
     }
@@ -62,14 +57,14 @@ app.post("/todos", async (req, res)=>{
     }
 });
 
-app.put("/todos/:id",async(req,res)=>{
+app.put("/todos/:id", authMiddleware, async(req,res)=>{
     try{
         const{ completed, title } =req.body;
         const updateFields = {};
         if(completed!==undefined)updateFields.completed=completed;
         if(title!==undefined) updateFields.title = title;
-        const updatedTodo = await Todo.findByIdAndUpdate(
-            req.params.id,
+        const updatedTodo = await Todo.findOneAndUpdate(
+            { _id: req.params.id, user: req.userId},
             updateFields,
             { new: true}
         );
@@ -84,7 +79,7 @@ app.put("/todos/:id",async(req,res)=>{
 
     app.delete("/todos/:id", async (req, res) => {
         try {
-          const deletedTodo = await Todo.findByIdAndDelete(req.params.id);
+          const deletedTodo = await Todo.findOneAndDelete({_id: req.params.id, user: req.userId});
           if (!deletedTodo) return res.status(404).json({ error: "Todo not found" });
       
           res.json(deletedTodo);
