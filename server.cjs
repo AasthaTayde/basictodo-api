@@ -77,7 +77,7 @@ app.put("/todos/:id", authMiddleware, async(req,res)=>{
     }
     });
 
-    app.delete("/todos/:id", async (req, res) => {
+    app.delete("/todos/:id", authMiddleware, async (req, res) => {
         try {
           const deletedTodo = await Todo.findOneAndDelete({_id: req.params.id, user: req.userId});
           if (!deletedTodo) return res.status(404).json({ error: "Todo not found" });
@@ -89,6 +89,7 @@ app.put("/todos/:id", authMiddleware, async(req,res)=>{
       });
 
       app.post("/register",async (req,res) => {
+        console.log("Register request recieved:",req.body);
         try {
             const { email, password } =req.body;
             if(!email || !password)//Basic validation

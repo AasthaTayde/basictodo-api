@@ -1,24 +1,49 @@
-const form = document.getElementById("loginForm");
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
+document.addEventListener("DOMContentLoaded", function () {
 
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+  const form = document.getElementById("loginForm");
+  const msgEl = document.getElementById("loginMessage");
 
-  const res = await fetch("/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password })
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    try {
+      const res = await fetch("/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.token) {
+        // Save token
+        localStorage.setItem("token", data.token);
+
+        // Show success message
+        msgEl.style.color = "green";
+        msgEl.textContent = "Login successful! Redirecting...";
+
+        // Redirect to todo page
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 1000);
+
+      } else {
+        msgEl.style.color = "red";
+        msgEl.textContent = data.message || data.error || "Login failed";
+      }
+
+    } catch (err) {
+      msgEl.style.color = "red";
+      msgEl.textContent = "Server error. Please try again.";
+      console.error(err);
+    }
+
   });
 
-  const data = await res.json();
-  const msgEl = document.getElementById("loginMessage");
-  if (res.ok && data.token) {
-    localStorage.setItem("token", data.token); // Save JWT for future requests
-    msgEl.style.color = "green";
-    msgEl.textContent = "Login successful! You can now access todos.";
-  } else {
-    msgEl.style.color = "red";
-    msgEl.textContent = data.message || data.error;
-  }
 });
