@@ -1,20 +1,26 @@
-document.addEventListener("DOMContentLoaded", function () {
+// login.js - with auto-redirect for logged-in users
 
+// --------------- Auto-redirect if already logged in ---------------
+const token = localStorage.getItem("token");
+if (token) {
+  window.location.href = "index.html";
+}
+
+// --------------- Login form logic ---------------
+document.addEventListener("DOMContentLoaded", function () {
   const form = document.getElementById("loginForm");
   const msgEl = document.getElementById("loginMessage");
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
 
     try {
       const res = await fetch("/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password })
       });
 
@@ -39,11 +45,9 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
     } catch (err) {
+      console.error(err);
       msgEl.style.color = "red";
       msgEl.textContent = "Server error. Please try again.";
-      console.error(err);
     }
-
   });
-
 });
