@@ -130,7 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   }
 
-  // Load todos
+  // Load todos initially
   loadTodos();
 
   // Add todo form submit
@@ -141,7 +141,27 @@ document.addEventListener("DOMContentLoaded", () => {
       addTodo();
     });
   }
+
+  // Apply filter button
+  const applyFilterBtn = document.getElementById("applyFilterBtn");
+  if (applyFilterBtn) {
+    applyFilterBtn.addEventListener("click", () => {
+      loadTodos();
+    });
+  }
+
+  // Clear filter button
+  const clearFilterBtn = document.getElementById("clearFilterBtn");
+  if (clearFilterBtn) {
+    clearFilterBtn.addEventListener("click", () => {
+      document.getElementById("completedFilter").value = "";
+      document.getElementById("searchInput").value = "";
+      loadTodos();
+    });
+  }
 });
+
+
 
 
 // -------------------- Load Todos --------------------
@@ -153,8 +173,15 @@ async function loadTodos() {
     return;
   }
 
+  const completed = document.getElementById("completedFilter")?.value;
+  const search = document.getElementById("searchInput")?.value.trim();
+  
+  const params = new URLSearchParams();
+  if(completed) params.append("completed",completed);
+  if(search) params.append("search", search);
+
   try {
-    const res = await fetch("/todos", {
+    const res = await fetch("/todos?" + params.toString(), {
       headers: { "Authorization": `Bearer ${token}` }
     });
 

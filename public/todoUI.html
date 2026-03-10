@@ -11,6 +11,25 @@
 <input id="todoInput" placeholder="Enter a new todo">
 <button type="button" onclick="addTodo()">Add</button>
 </form> 
+
+<div id ="filterSection">
+    <label>
+        Show completed:
+        <select id="completedFilter">
+            <option value="">All</option>
+            <option value="true">Completed</option>
+            <option value="false">Incomplete</option>
+
+        </select>
+    </label>
+
+<label>
+    Search:
+    <input type="text" id="searchInput" placeholder="Search todos">
+</label>
+<button type="button" id="applyFilterBtn">Apply</button>
+<button type="button" id="clearFilterBtn">Clear</button>
+</div>
 <ul id="todoList"></ul> 
 <script src="todoUI.js"></script>
 </body> 

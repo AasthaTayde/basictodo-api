@@ -33,13 +33,31 @@ app.get("/status",(req,res)=>{
 
 app.get("/todos", authMiddleware, async (req,res)=>{
     try{
-        const todos = await Todo.find({ user: req.userId});
+        const { completed, search } = req.query;
+
+        //Base query : only users todos
+        const query = { user: req.userId};
+
+        //Filter by completed
+        if( completed !==undefined)
+        {
+            query.completed = completed === "true";
+        }
+
+        //search by title
+        if (search)
+        {
+            query.title = { $regex: search, $options: "i"};
+        }
+
+        const todos = await Todo.find(query).sort({ createdAt: -1});
         res.json(todos);
     }
-catch(err)
-{
-    res.status(500).json({error:"Server error"});
-}
+    catch (err)
+    {
+        console.error(err);
+        res.status(500).json({ error: "Server error"});
+    }
 });
 
 app.post("/todos",authMiddleware, async (req, res)=>{
