@@ -1,10 +1,12 @@
 // register.js - with auto-redirect for logged-in users
 
 // --------------- Auto-redirect if already logged in ---------------
-const token = localStorage.getItem("token");
+document.addEventListener("DOMContentLoaded",()=>{
+  const token = localStorage.getItem("token");
 if (token) {
-  window.location.href = "index.html";
+  window.location.href = "todoUI.html";
 }
+});
 
 // --------------- Registration form logic ---------------
 document.addEventListener("DOMContentLoaded", function () {

@@ -121,15 +121,6 @@ async function finishEditTodo(id, editinput,todoTextElement ){
 // index.js - Todo App with JWT Authentication
 
 document.addEventListener("DOMContentLoaded", () => {
-  loadTodos();
-
-  // Add todo form submit
-  const form = document.getElementById("todoForm");
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    addTodo();
-  });
-
   // Logout button
   const logoutBtn = document.getElementById("logoutBtn");
   if (logoutBtn) {
@@ -138,7 +129,20 @@ document.addEventListener("DOMContentLoaded", () => {
       window.location.href = "login.html";
     };
   }
+
+  // Load todos
+  loadTodos();
+
+  // Add todo form submit
+  const form = document.getElementById("todoForm");
+  if (form) {
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      addTodo();
+    });
+  }
 });
+
 
 // -------------------- Load Todos --------------------
 async function loadTodos() {

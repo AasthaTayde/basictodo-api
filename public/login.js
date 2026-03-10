@@ -1,10 +1,12 @@
 // login.js - with auto-redirect for logged-in users
 
 // --------------- Auto-redirect if already logged in ---------------
+document.addEventListener("DOMContentLoaded",()=>{
 const token = localStorage.getItem("token");
 if (token) {
-  window.location.href = "index.html";
+  window.location.href = "todoUI.html";
 }
+});
 
 // --------------- Login form logic ---------------
 document.addEventListener("DOMContentLoaded", function () {
@@ -36,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Redirect to todo page
         setTimeout(() => {
-          window.location.href = "index.html";
+          window.location.href = "todoUI.html";
         }, 1000);
 
       } else {
