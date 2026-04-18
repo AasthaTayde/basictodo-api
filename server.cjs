@@ -164,7 +164,13 @@ app.put("/todos/:id", authMiddleware, async(req,res)=>{
         res.status(500).json({message:"Server error"});
       }
     });
+    
+    const PORT = process.env.PORT || 3000;
 
-      app.listen(3000, () => {
-    console.log("Server started on http://localhost:3000");
-  });
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+
+
+   
