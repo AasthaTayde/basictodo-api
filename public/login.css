@@ -30,7 +30,7 @@ body {
   button {
     width: 100%;
     padding: 10px;
-    background: #28a745;
+    background: #111827;
     color: #fff;
     border: none;
     border-radius: 5px;
@@ -38,11 +38,18 @@ body {
   }
   
   button:hover {
-    background: #218838;
+    background: #1f2937;
   }
   
-  #loginMessage {
+  #loginMessage{
     text-align: center;
     margin-top: 10px;
     color: red;
   }
+
+  .logout-container {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+ }

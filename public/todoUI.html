@@ -1,36 +1,62 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
-<head> <meta charset="UTF-8">
-<title>Todo App</title> 
-<link rel="stylesheet" href="todoUI.css"> 
-</head> 
-<body> 
-<h1>Todo App</h1>
-<button id="logoutBtn" type="button">Logout</button>
-<form id ="todoForm">
-<input id="todoInput" placeholder="Enter a new todo">
-<button type="button" onclick="addTodo()">Add</button>
-</form> 
+<head>
+<meta charset="UTF-8">
+<title>Todo App</title>
+<link rel="stylesheet" href="todoUI.css">
+</head>
 
-<div id ="filterSection">
-    <label>
-        Show completed:
-        <select id="completedFilter">
-            <option value="">All</option>
-            <option value="true">Completed</option>
-            <option value="false">Incomplete</option>
+<body>
 
-        </select>
-    </label>
+<div class="container">
 
-<label>
-    Search:
-    <input type="text" id="searchInput" placeholder="Search todos">
-</label>
-<button type="button" id="applyFilterBtn">Apply</button>
-<button type="button" id="clearFilterBtn">Clear</button>
+    <!-- Header -->
+    <div class="header">
+        <h1>Todo App</h1>
+    </div>
+
+    <!-- Input Section -->
+    <div class="section">
+        <form id="todoForm" class="todo-form">
+            <input id="todoInput" placeholder="Enter a new todo">
+            <button type="button" class="primary" onclick="addTodo()">Add</button>
+        </form>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="section filters">
+
+        <label>
+            Show:
+            <select id="completedFilter">
+                <option value="">All</option>
+                <option value="true">Completed</option>
+                <option value="false">Incomplete</option>
+            </select>
+        </label>
+
+        <label>
+            Search:
+            <input type="text" id="searchInput" placeholder="Search todos">
+        </label>
+
+        <button type="button" id="applyFilterBtn" class="secondary">Apply</button>
+        <button type="button" id="clearFilterBtn" class="secondary">Clear</button>
+
+    </div>
+
+    <!-- Todo List -->
+    <div class="section">
+        <ul id="todoList"></ul>
+    </div>
+
+    <!-- Logout (ONLY ONE, INSIDE CARD) -->
+    <div class="logout-container">
+        <button id="logoutBtn" type="button" class="secondary">Logout</button>
+    </div>
+
 </div>
-<ul id="todoList"></ul> 
+
 <script src="todoUI.js"></script>
-</body> 
+</body>
 </html>

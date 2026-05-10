@@ -3,16 +3,61 @@
 <head>
 <meta charset="UTF-8">
 <title>Todo App Home</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    text-align: center;
+    background: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+h1 {
+    margin-bottom: 10px;
+}
+
+p {
+    color: #555;
+    margin-bottom: 20px;
+}
+
+a {
+    text-decoration: none;
+    color: white;
+    background-color:black;
+    padding: 10px 20px;
+    border-radius: 6px;
+    margin: 5px;
+    display: inline-block;
+}
+
+a:hover {
+    background-color: #1f2937;
+}
+</style>
+
 </head>
 
 <body>
-<h1>Welcome to Todo App</h1>
-<p> Manage your tasks easily.</p>
 
-<p>
-<a href="login.html">Login</a> |
-<a href="register.html">Register</a> |
-</p>
+<div class="container">
+    <h1>Welcome to Todo App</h1>
+    <p>Manage your tasks easily.</p>
+
+    <a href="login.html">Login</a>
+    <a href="register.html">Register</a>
+</div>
 
 </body>
 </html>
